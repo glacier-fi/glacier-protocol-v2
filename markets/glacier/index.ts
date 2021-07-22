@@ -21,13 +21,13 @@ export const GlacierConfig: IGlacierConfiguration = {
   },
   ReserveAssets: {
     [ePolygonNetwork.matic]: {
-      gCLP: '0x4444C8eB3b1D00034812a6b2C58E4082e596e459',
-      gETH: '0x69f14358CE529d642F1FC25d3f80Fe7587131943',
+      gCLP: ZERO_ADDRESS,
+      gETH: ZERO_ADDRESS,
     },
     [ePolygonNetwork.mumbai]: {
       // replace for local deployment
-      gCLP: '0x09635F643e140090A9A8Dcd712eD6285858ceBef',
-      gETH: '0x851356ae760d987E095750cCeb3bC6014560891C',
+      gCLP: ZERO_ADDRESS,
+      gETH: ZERO_ADDRESS,
     },
   },
 };

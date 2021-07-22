@@ -31,7 +31,7 @@
     "matic:mumbai:full:migration": "npm run compile && npm run hardhat:mumbai sidechain:mainnet -- --pool Matic --skip-registry",
     "matic:matic:full:migration": "npm run compile && npm run hardhat:matic sidechain:mainnet -- --pool Matic --skip-registry",
     "glacier:matic:full:migration": "npm run compile && npm run hardhat:matic sidechain:mainnet -- --pool Glacier --skip-registry",
-    "glacier:mumbai:full:migration": "npm run compile && npm run hardhat:mumbai sidechain:mainnet -- --pool Glacier --skip-registry",
+    "glacier:mumbai:full:migration": "npm run compile && npm run hardhat:mumbai sidechain:mainnet -- --pool Glacier",
     "amm:kovan:full:migration": "npm run compile && npm run hardhat:kovan -- amm:mainnet --skip-registry",
     "aave:docker:full:migration:add-registry": "npm run compile && npm run hardhat:docker -- aave:mainnet",
     "aave:kovan:full:migration:add-registry": "npm run compile && npm run hardhat:kovan -- aave:mainnet",

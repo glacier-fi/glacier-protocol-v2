@@ -15,10 +15,10 @@ import { exit } from 'process';
 
 task('add-market-to-registry', 'Adds address provider to registry')
   .addParam('pool', `Pool name to retrieve configuration, supported: ${Object.values(ConfigNames)}`)
-  .addOptionalParam('addressesProvider', `Address of LendingPoolAddressProvider`)
+  .addOptionalParam('addressesprovider', `Address of LendingPoolAddressProvider`)
   .addFlag('verify', 'Verify contracts at Etherscan')
   .addFlag('deployRegistry', 'Deploy a new address provider registry')
-  .setAction(async ({ verify, addressesProvider, pool, deployRegistry }, DRE) => {
+  .setAction(async ({ verify, addressesprovider, pool, deployRegistry }, DRE) => {
     await DRE.run('set-DRE');
     let signer: Signer;
     const network = <eNetwork>DRE.network.name;
@@ -81,7 +81,7 @@ task('add-market-to-registry', 'Adds address provider to registry')
       await getLendingPoolAddressesProviderRegistry(providerRegistryAddress)
     ).connect(signer);
 
-    const addressesProviderInstance = await getLendingPoolAddressesProvider(addressesProvider);
+    const addressesProviderInstance = await getLendingPoolAddressesProvider(addressesprovider);
 
     // 2. Set the provider at the Registry
     await waitForTx(

@@ -115,7 +115,7 @@ export const CommonsConfig: ICommonConfiguration = {
     [ePolygonNetwork.matic]: '',
   },
   ProviderRegistry: {
-    [ePolygonNetwork.mumbai]: ZERO_ADDRESS,
+    [ePolygonNetwork.mumbai]: '',
     [ePolygonNetwork.matic]: '',
   },
   ProviderRegistryOwner: {
@@ -148,8 +148,8 @@ export const CommonsConfig: ICommonConfiguration = {
   },
   ChainlinkAggregator: {
     [ePolygonNetwork.matic]: {
-      gCLP: '0xf238A5fB3A15aB4b063B3894Fab30442620b70B9',
-      gETH: '0xF9680D99D6C9589e2a93a78A04A279e509205945',
+      gCLP: ZERO_ADDRESS,
+      gETH: ZERO_ADDRESS,
     },
     [ePolygonNetwork.mumbai]: {
       gCLP: ZERO_ADDRESS,
@@ -166,16 +166,16 @@ export const CommonsConfig: ICommonConfiguration = {
     [ePolygonNetwork.matic]: '',
   },
   WETH: {
-    [ePolygonNetwork.mumbai]: '0x851356ae760d987E095750cCeb3bC6014560891C', // replace for local deployment
-    [ePolygonNetwork.matic]: '0x851356ae760d987E095750cCeb3bC6014560891C',
+    [ePolygonNetwork.mumbai]: ZERO_ADDRESS, // replace for local deployment
+    [ePolygonNetwork.matic]: ZERO_ADDRESS,
   },
   WrappedNativeToken: {
     [ePolygonNetwork.mumbai]: ZERO_ADDRESS,
     [ePolygonNetwork.matic]: ZERO_ADDRESS,
   },
   ReserveFactorTreasuryAddress: {
-    [ePolygonNetwork.mumbai]: '0x334D7A6A8a874464BAAd71cEb98C7f16C8B6a720',
-    [ePolygonNetwork.matic]: '0x334D7A6A8a874464BAAd71cEb98C7f16C8B6a720',
+    [ePolygonNetwork.mumbai]: ZERO_ADDRESS,
+    [ePolygonNetwork.matic]: ZERO_ADDRESS,
   },
   IncentivesController: {
     [ePolygonNetwork.mumbai]: ZERO_ADDRESS,
