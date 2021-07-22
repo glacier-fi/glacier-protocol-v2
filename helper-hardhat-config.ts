@@ -9,6 +9,7 @@ import {
 
 require('dotenv').config();
 
+const MUMBAI_LOCAL = process.env.MUMBAI_LOCAL || '';
 const INFURA_KEY = process.env.INFURA_KEY || '';
 const ALCHEMY_KEY = process.env.ALCHEMY_KEY || '';
 const TENDERLY_FORK_ID = process.env.TENDERLY_FORK_ID || '';
@@ -46,8 +47,12 @@ export const NETWORKS_RPC_URL: iParamsPerNetwork<string> = {
   [eEthereumNetwork.hardhat]: 'http://localhost:8545',
   [eEthereumNetwork.buidlerevm]: 'http://localhost:8545',
   [eEthereumNetwork.tenderlyMain]: `https://rpc.tenderly.co/fork/${TENDERLY_FORK_ID}`,
-  [ePolygonNetwork.mumbai]: 'https://rpc-mumbai.maticvigil.com',
-  [ePolygonNetwork.matic]: 'https://rpc-mainnet.matic.network',
+  [ePolygonNetwork.mumbai]: MUMBAI_LOCAL
+    ? `http://localhost:8545`
+    : `https://rpc-mumbai.maticvigil.com`,
+  [ePolygonNetwork.matic]: INFURA_KEY
+    ? `https://polygon-mainnet.infura.io/v3/${INFURA_KEY}`
+    : 'https://rpc-mainnet.matic.network',
   [eXDaiNetwork.xdai]: 'https://rpc.xdaichain.com/',
 };
 

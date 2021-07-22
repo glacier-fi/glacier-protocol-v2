@@ -1,6 +1,10 @@
 import { task } from 'hardhat/config';
 import { getParamPerNetwork } from '../../helpers/contracts-helpers';
-import { deployAaveOracle, deployLendingRateOracle } from '../../helpers/contracts-deployments';
+import {
+  deployAaveOracle,
+  deployGlacierOracle,
+  deployLendingRateOracle,
+} from '../../helpers/contracts-deployments';
 import { setInitialMarketRatesInRatesOracleByHelper } from '../../helpers/oracles-helpers';
 import { ICommonConfiguration, eNetwork, SymbolMap } from '../../helpers/types';
 import { waitForTx, notFalsyOrZeroAddress } from '../../helpers/misc-utils';
@@ -46,19 +50,35 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
         ...reserveAssets,
         USD: UsdAddress,
       };
-      const [tokens, aggregators] = getPairsTokenAggregator(tokensToWatch, chainlinkAggregators);
+
+      let tokens: string[];
+      let aggregators: string[];
+
+      if (ConfigNames.Glacier != pool) {
+        [tokens, aggregators] = getPairsTokenAggregator(tokensToWatch, chainlinkAggregators);
+      } else {
+        [tokens, aggregators] = getPairsTokenAggregator(reserveAssets, chainlinkAggregators);
+      }
 
       let aaveOracle: AaveOracle;
       let lendingRateOracle: LendingRateOracle;
 
       if (notFalsyOrZeroAddress(aaveOracleAddress)) {
-        aaveOracle = await await getAaveOracle(aaveOracleAddress);
+        aaveOracle = await getAaveOracle(aaveOracleAddress);
       } else {
-        aaveOracle = await deployAaveOracle(
-          [tokens, aggregators, fallbackOracleAddress, await getWethAddress(poolConfig)],
-          verify
-        );
-        await waitForTx(await aaveOracle.setAssetSources(tokens, aggregators));
+        if (ConfigNames.Glacier != pool) {
+          aaveOracle = await deployAaveOracle(
+            [tokens, aggregators, fallbackOracleAddress, await getWethAddress(poolConfig)],
+            verify
+          );
+        } else {
+          aaveOracle = await deployGlacierOracle(
+            [tokens, aggregators, fallbackOracleAddress, await getWethAddress(poolConfig)],
+            verify
+          );
+        }
+        // Constructor initialize assets
+        //await waitForTx(await aaveOracle.setAssetSources(tokens, aggregators));
       }
 
       if (notFalsyOrZeroAddress(lendingRateOracleAddress)) {
@@ -74,7 +94,7 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
         );
       }
 
-      console.log('Aave Oracle: %s', lendingRateOracle.address);
+      console.log('Aave Oracle: %s', aaveOracle.address);
       console.log('Lending Rate Oracle: %s', lendingRateOracle.address);
 
       // Register the proxy price provider on the addressesProvider

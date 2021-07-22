@@ -38,6 +38,7 @@ export enum AavePools {
   proto = 'proto',
   matic = 'matic',
   amm = 'amm',
+  glacier = 'glacier',
 }
 
 export enum eContractid {
@@ -239,6 +240,8 @@ export interface iAssetBase<T> {
   WMATIC: T;
   STAKE: T;
   xSUSHI: T;
+  gCLP: T;
+  gETH: T;
 }
 
 export type iAssetsWithoutETH<T> = Omit<iAssetBase<T>, 'ETH'>;
@@ -293,6 +296,12 @@ export type iLpPoolAssets<T> = Pick<
   | 'UniYFIWETH'
   | 'BptWBTCWETH'
   | 'BptBALWETH'
+>;
+
+export type iGlacierPoolAssets<T> = Pick<
+  iAssetBase<T>,
+  | 'gCLP'
+  | 'gETH'
 >;
 
 export type iMaticPoolAssets<T> = Pick<
@@ -352,6 +361,8 @@ export enum TokenContractId {
   WMATIC = 'WMATIC',
   STAKE = 'STAKE',
   xSUSHI = 'xSUSHI',
+  gCLP = 'gCLP',
+  gETH = 'gETH',
 }
 
 export interface IReserveParams extends IReserveBorrowParams, IReserveCollateralParams {
@@ -424,6 +435,7 @@ export interface iParamsPerPool<T> {
   [AavePools.proto]: T;
   [AavePools.matic]: T;
   [AavePools.amm]: T;
+  [AavePools.glacier]: T;
 }
 
 export interface iBasicDistributionParams {
@@ -514,6 +526,10 @@ export interface IXDAIConfiguration extends ICommonConfiguration {
 
 export interface ITokenAddress {
   [token: string]: tEthereumAddress;
+}
+
+export interface IGlacierConfiguration extends ICommonConfiguration {
+  ReservesConfig: iGlacierPoolAssets<IReserveParams>;
 }
 
 export type PoolConfiguration = ICommonConfiguration | IAaveConfiguration;

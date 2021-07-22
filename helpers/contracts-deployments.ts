@@ -21,6 +21,7 @@ import {
   ATokenFactory,
   ATokensAndRatesHelperFactory,
   AaveOracleFactory,
+  GlacierOracleFactory,
   DefaultReserveInterestRateStrategyFactory,
   DelegationAwareATokenFactory,
   InitializableAdminUpgradeabilityProxyFactory,
@@ -219,6 +220,17 @@ export const deployMockAggregator = async (price: tStringTokenSmallUnits, verify
     await new MockAggregatorFactory(await getFirstSigner()).deploy(price),
     eContractid.MockAggregator,
     [price],
+    verify
+  );
+
+export const deployGlacierOracle = async (
+  args: [tEthereumAddress[], tEthereumAddress[], tEthereumAddress, tEthereumAddress],
+  verify?: boolean
+) =>
+  withSaveAndVerify(
+    await new GlacierOracleFactory(await getFirstSigner()).deploy(...args),
+    eContractid.AaveOracle,
+    args,
     verify
   );
 
@@ -478,7 +490,7 @@ export const deployMockTokens = async (config: PoolConfiguration, verify?: boole
         tokenSymbol,
         tokenSymbol,
         configData[tokenSymbol as keyof iMultiPoolsAssets<IReserveParams>].reserveDecimals ||
-          defaultDecimals.toString(),
+        defaultDecimals.toString(),
       ],
       verify
     );
