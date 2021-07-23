@@ -16,18 +16,21 @@ import { deployAllMockAggregators } from '../../helpers/oracles-helpers';
 import { eNetwork, ICommonConfiguration } from '../../helpers/types';
 
 task('eth', 'Deploy oracles for dev enviroment')
-  .setAction(async (_, DRE) => {
+  .addParam('oracle', 'Oracle')
+  .addParam('asset', 'Asset')
+  .setAction(async ({oracle,asset}, DRE) => {
     await DRE.run('set-DRE');
-    const aaveOracle = await getAaveOracle('0x4C2F7092C2aE51D986bEFEe378e50BD4dB99C901');
-    const asset = await aaveOracle.getAssetPrice('0x09635F643e140090A9A8Dcd712eD6285858ceBef');
-    console.log(asset.toString());
-    console.log(utils.formatUnits(asset, 18));
+    const aaveOracle = await getAaveOracle(oracle);
+    const price = await aaveOracle.getAssetPrice(asset);
+    
+    console.log(price.toString(), utils.formatUnits(price, 18));
   });
 
 task('dev:deploy-glacier-oracle', 'Deploy oracles for dev enviroment')
   .addFlag('verify', 'Verify contracts at Etherscan')
   .addParam('pool', `Pool name to retrieve configuration, supported: ${Object.values(ConfigNames)}`)
-  .setAction(async ({ verify, pool }, DRE) => {
+  .addParam('addressesprovider', `Address of LendingPoolAddressProvider`)
+  .setAction(async ({ verify, pool, addressesprovider }, DRE) => {
     await DRE.run('set-DRE');
     const network = <eNetwork>DRE.network.name;
     const poolConfig = loadPoolConfig(pool);
@@ -37,7 +40,7 @@ task('dev:deploy-glacier-oracle', 'Deploy oracles for dev enviroment')
     } = poolConfig as ICommonConfiguration;
 
     const reserveAssets = getParamPerNetwork(ReserveAssets, network);
-    const addressesProvider = await getLendingPoolAddressesProvider();
+    const addressesProvider = await getLendingPoolAddressesProvider(addressesprovider);
 
     Object.keys(AllAssetsInitialPrices).forEach(function (key) {
       if (!reserveAssets.hasOwnProperty(key)) {

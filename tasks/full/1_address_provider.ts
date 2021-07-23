@@ -34,7 +34,7 @@ task(
 
       await DRE.run('add-market-to-registry', {
         pool,
-        addressesProvider: addressesProvider.address,
+        addressesprovider: addressesProvider.address,
         deployRegistry: !notFalsyOrZeroAddress(providerRegistryAddress),
       });
     }

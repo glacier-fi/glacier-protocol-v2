@@ -152,8 +152,9 @@ export const CommonsConfig: ICommonConfiguration = {
       gETH: ZERO_ADDRESS,
     },
     [ePolygonNetwork.mumbai]: {
-      gCLP: ZERO_ADDRESS,
-      gETH: ZERO_ADDRESS,
+      // replace for local deployment
+      gCLP: '0x233ecA53C91A72Ac76EDf2fcE0840D36f7221084',
+      gETH: '0xe2dEB456E0Fd8EF80E398d54152a5262D46a3cb8',
     },
   },
   ReserveAssets: {
@@ -166,7 +167,7 @@ export const CommonsConfig: ICommonConfiguration = {
     [ePolygonNetwork.matic]: '',
   },
   WETH: {
-    [ePolygonNetwork.mumbai]: ZERO_ADDRESS, // replace for local deployment
+    [ePolygonNetwork.mumbai]: '0xe2dEB456E0Fd8EF80E398d54152a5262D46a3cb8', // replace for local deployment
     [ePolygonNetwork.matic]: ZERO_ADDRESS,
   },
   WrappedNativeToken: {
@@ -174,7 +175,7 @@ export const CommonsConfig: ICommonConfiguration = {
     [ePolygonNetwork.matic]: ZERO_ADDRESS,
   },
   ReserveFactorTreasuryAddress: {
-    [ePolygonNetwork.mumbai]: ZERO_ADDRESS,
+    [ePolygonNetwork.mumbai]: '0x334D7A6A8a874464BAAd71cEb98C7f16C8B6a720', // replace for local deployment
     [ePolygonNetwork.matic]: ZERO_ADDRESS,
   },
   IncentivesController: {
