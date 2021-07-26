@@ -70,7 +70,10 @@ export const MOCK_CHAINLINK_AGGREGATORS_PRICES = {
   WMATIC: oneEther.multipliedBy('0.003620948469').toFixed(),
   STAKE: oneEther.multipliedBy('0.003620948469').toFixed(),
   xSUSHI: oneEther.multipliedBy('0.00913428586').toFixed(),
-  USD: '5848466240000000',
+  USD: oneFiat.multipliedBy('1809.67804543').toFixed(),
+  // currently CLP/ETH is not supported by Chainlink instead we use CLP/USD
+  // GlacierOracle calculate gCLP/ETH using the pair ETH/USD
+  // This price is expressed in fiat terms
   gETH: oneEther.toFixed(),
-  gCLP: oneEther.multipliedBy('0.000000606').toFixed(),
+  gCLP: oneFiat.multipliedBy('0.001319').toFixed(),
 };

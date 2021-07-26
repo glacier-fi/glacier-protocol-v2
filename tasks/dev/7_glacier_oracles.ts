@@ -1,4 +1,5 @@
 import { utils } from 'ethers';
+import { isAddress } from 'ethers/lib/utils';
 import { task } from 'hardhat/config';
 
 import { ConfigNames, getWethAddress, loadPoolConfig } from '../../helpers/configuration';
@@ -13,23 +14,24 @@ import { getParamPerNetwork } from '../../helpers/contracts-helpers';
 import { waitForTx } from '../../helpers/misc-utils';
 import { getAllAggregatorsAddresses } from '../../helpers/mock-helpers';
 import { deployAllMockAggregators } from '../../helpers/oracles-helpers';
-import { eNetwork, ICommonConfiguration } from '../../helpers/types';
+import { eNetwork, ICommonConfiguration, SymbolMap } from '../../helpers/types';
 
 task('eth', 'Deploy oracles for dev enviroment')
   .addParam('oracle', 'Oracle')
   .addParam('asset', 'Asset')
-  .setAction(async ({oracle,asset}, DRE) => {
+  .addParam('decimals', 'Decimals')
+  .setAction(async ({ oracle, asset, decimals }, DRE) => {
     await DRE.run('set-DRE');
     const aaveOracle = await getAaveOracle(oracle);
     const price = await aaveOracle.getAssetPrice(asset);
-    
-    console.log(price.toString(), utils.formatUnits(price, 18));
+
+    console.log(price.toString(), utils.formatUnits(price, decimals));
   });
 
 task('dev:deploy-glacier-oracle', 'Deploy oracles for dev enviroment')
   .addFlag('verify', 'Verify contracts at Etherscan')
   .addParam('pool', `Pool name to retrieve configuration, supported: ${Object.values(ConfigNames)}`)
-  .addParam('addressesprovider', `Address of LendingPoolAddressProvider`)
+  .addOptionalParam('addressesprovider', `Address of LendingPoolAddressProvider`)
   .setAction(async ({ verify, pool, addressesprovider }, DRE) => {
     await DRE.run('set-DRE');
     const network = <eNetwork>DRE.network.name;
@@ -37,22 +39,31 @@ task('dev:deploy-glacier-oracle', 'Deploy oracles for dev enviroment')
     const {
       Mocks: { AllAssetsInitialPrices },
       ReserveAssets,
+      ProtocolGlobalParams: { UsdAddress },
     } = poolConfig as ICommonConfiguration;
 
     const reserveAssets = getParamPerNetwork(ReserveAssets, network);
-    const addressesProvider = await getLendingPoolAddressesProvider(addressesprovider);
+
 
     Object.keys(AllAssetsInitialPrices).forEach(function (key) {
-      if (!reserveAssets.hasOwnProperty(key)) {
+      if (key != 'gCLP' && key != 'USD') {
         delete AllAssetsInitialPrices[key];
       }
     });
+
+    const tokensToWatch: SymbolMap<string> = {
+      ...reserveAssets,
+      USD: UsdAddress,
+    };
 
     const mockAggregators = await deployAllMockAggregators(AllAssetsInitialPrices, verify);
 
     const allAggregatorsAddresses = getAllAggregatorsAddresses(mockAggregators);
 
-    const [tokens, aggregators] = getPairsTokenAggregator(reserveAssets, allAggregatorsAddresses);
+    console.log(allAggregatorsAddresses)
+    console.log(tokensToWatch)
+
+    const [tokens, aggregators] = getPairsTokenAggregator(tokensToWatch, allAggregatorsAddresses);
 
     console.log(tokens, aggregators);
 
@@ -61,6 +72,9 @@ task('dev:deploy-glacier-oracle', 'Deploy oracles for dev enviroment')
       verify
     );
 
-    await waitForTx(await addressesProvider.setPriceOracle(glacierOracle.address));
+    if (isAddress(addressesprovider)) {
+      const addressesProvider = await getLendingPoolAddressesProvider(addressesprovider);
+      await waitForTx(await addressesProvider.setPriceOracle(glacierOracle.address));
+    }
 
   });

@@ -17,7 +17,7 @@ import {IChainlinkAggregator} from '../interfaces/IChainlinkAggregator.sol';
 contract GlacierOracle is IPriceOracleGetter, Ownable {
   using SafeMath for uint256;
 
-  uint256 constant FIAT_ACURRACY = 1e16;
+  address public constant MOCK_USD_ADDRESS = 0x10F7Fc1F91Ba351f9C629c5947AD69bD03C05b96;
 
   event WethSet(address indexed weth);
   event AssetSourceUpdated(address indexed asset, address indexed source);
@@ -91,7 +91,11 @@ contract GlacierOracle is IPriceOracleGetter, Ownable {
     } else {
       int256 price = IChainlinkAggregator(source).latestAnswer();
       if (price > 0) {
-        source = assetsSources[WETH];
+        if (asset == MOCK_USD_ADDRESS){
+          return uint256(price);
+        }
+
+        source = assetsSources[MOCK_USD_ADDRESS];
         
         int256 eth = IChainlinkAggregator(source).latestAnswer();
         if (eth > 0) {

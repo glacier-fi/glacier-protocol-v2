@@ -54,11 +54,7 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
       let tokens: string[];
       let aggregators: string[];
 
-      if (ConfigNames.Glacier != pool) {
-        [tokens, aggregators] = getPairsTokenAggregator(tokensToWatch, chainlinkAggregators);
-      } else {
-        [tokens, aggregators] = getPairsTokenAggregator(reserveAssets, chainlinkAggregators);
-      }
+      [tokens, aggregators] = getPairsTokenAggregator(tokensToWatch, chainlinkAggregators);
 
       let aaveOracle: AaveOracle;
       let lendingRateOracle: LendingRateOracle;
@@ -102,9 +98,8 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
       await waitForTx(await addressesProvider.setLendingRateOracle(lendingRateOracle.address));
     } catch (error) {
       if (DRE.network.name.includes('tenderly')) {
-        const transactionLink = `https://dashboard.tenderly.co/${DRE.config.tenderly.username}/${
-          DRE.config.tenderly.project
-        }/fork/${DRE.tenderlyNetwork.getFork()}/simulation/${DRE.tenderlyNetwork.getHead()}`;
+        const transactionLink = `https://dashboard.tenderly.co/${DRE.config.tenderly.username}/${DRE.config.tenderly.project
+          }/fork/${DRE.tenderlyNetwork.getFork()}/simulation/${DRE.tenderlyNetwork.getHead()}`;
         console.error('Check tx error:', transactionLink);
       }
       throw error;

@@ -26,8 +26,8 @@ export const GlacierConfig: IGlacierConfiguration = {
     },
     [ePolygonNetwork.mumbai]: {
       // replace for local deployment
-      gCLP: '0x233ecA53C91A72Ac76EDf2fcE0840D36f7221084',
-      gETH: '0xe2dEB456E0Fd8EF80E398d54152a5262D46a3cb8',
+      gCLP: ZERO_ADDRESS,
+      gETH: ZERO_ADDRESS,
     },
   },
 };
