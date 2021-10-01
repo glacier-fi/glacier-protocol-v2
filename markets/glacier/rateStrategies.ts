@@ -5,9 +5,9 @@ import { IInterestRateStrategyParams } from '../../helpers/types';
 export const rateStrategyGCLP: IInterestRateStrategyParams = {
   name: "rateStrategyGCLP",
   optimalUtilizationRate: new BigNumber(0.8).multipliedBy(oneRay).toFixed(),
-  baseVariableBorrowRate: new BigNumber(0.1).multipliedBy(oneRay).toFixed(),
-  variableRateSlope1: new BigNumber(0.15).multipliedBy(oneRay).toFixed(),
-  variableRateSlope2: new BigNumber(0.15).multipliedBy(oneRay).toFixed(),
+  baseVariableBorrowRate: new BigNumber(0).multipliedBy(oneRay).toFixed(),
+  variableRateSlope1: new BigNumber(0.25).multipliedBy(oneRay).toFixed(),
+  variableRateSlope2: new BigNumber(0.25).multipliedBy(oneRay).toFixed(),
   stableRateSlope1: '0',
   stableRateSlope2: '0',
 };

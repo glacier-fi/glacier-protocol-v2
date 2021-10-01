@@ -74,6 +74,6 @@ export const MOCK_CHAINLINK_AGGREGATORS_PRICES = {
   // currently CLP/ETH is not supported by Chainlink instead we use CLP/USD
   // GlacierOracle calculate gCLP/ETH using the pair ETH/USD
   // This price is expressed in fiat terms
-  gETH: oneEther.toFixed(),
-  gCLP: oneFiat.multipliedBy('0.001319').toFixed(),
+  gETH: oneFiat.multipliedBy('3271.73027428').toFixed(),
+  gCLP: oneFiat.multipliedBy('0.00128500').toFixed(),
 };

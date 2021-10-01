@@ -12,20 +12,22 @@ import {IChainlinkAggregator} from '../interfaces/IChainlinkAggregator.sol';
 /// @notice Proxy smart contract to get the price of an asset from a price source, with Chainlink Aggregator
 ///         smart contracts as primary option
 /// - If the returned price by a Chainlink aggregator is <= 0, the call is forwarded to a fallbackOracle
-/// - Calculate the price of gCLP to ETH
+/// - Return the price of an asset expressed on fiat
 ///   
 contract GlacierOracle is IPriceOracleGetter, Ownable {
   using SafeMath for uint256;
 
   address public constant MOCK_USD_ADDRESS = 0x10F7Fc1F91Ba351f9C629c5947AD69bD03C05b96;
 
-  event WethSet(address indexed weth);
+  event FiatSet(address indexed fiat);
   event AssetSourceUpdated(address indexed asset, address indexed source);
   event FallbackOracleUpdated(address indexed fallbackOracle);
 
   mapping(address => IChainlinkAggregator) private assetsSources;
   IPriceOracleGetter private _fallbackOracle;
-  address public immutable WETH;
+  address public immutable FIAT;
+  uint256 public constant ONE_FIAT = 1e8;
+  uint256 public constant FIAT_ACCURACY = 1e16;
 
   /// @notice Constructor
   /// @param assets The addresses of the assets
@@ -36,12 +38,12 @@ contract GlacierOracle is IPriceOracleGetter, Ownable {
     address[] memory assets,
     address[] memory sources,
     address fallbackOracle,
-    address weth
+    address fiat
   ) public {
     _setFallbackOracle(fallbackOracle);
     _setAssetsSources(assets, sources);
-    WETH = weth;
-    emit WethSet(weth);
+    FIAT = fiat;
+    emit FiatSet(fiat);
   }
 
   /// @notice External function called by the Aave governance to set or replace sources of assets
@@ -84,8 +86,8 @@ contract GlacierOracle is IPriceOracleGetter, Ownable {
   function getAssetPrice(address asset) public view override returns (uint256) {
     IChainlinkAggregator source = assetsSources[asset];
 
-    if (asset == WETH) {
-      return 1 ether;
+    if (asset == FIAT) {
+      return ONE_FIAT;
     } else if (address(source) == address(0)) {
       return _fallbackOracle.getAssetPrice(asset);
     } else {
@@ -94,17 +96,17 @@ contract GlacierOracle is IPriceOracleGetter, Ownable {
         if (asset == MOCK_USD_ADDRESS){
           return uint256(price);
         }
-
-        source = assetsSources[MOCK_USD_ADDRESS];
         
-        int256 eth = IChainlinkAggregator(source).latestAnswer();
-        if (eth > 0) {
-          uint256 invert = uint256(1e26).div(uint256(eth));
-          
-          return invert.mul(uint256(price)).div(uint256(1e8));
+        source = assetsSources[FIAT];
+
+        int256 fiat = IChainlinkAggregator(source).latestAnswer();
+        if (fiat > 0) {
+          uint256 invert = FIAT_ACCURACY.div(uint256(fiat));
+
+          return invert.mul(uint256(price)).div(ONE_FIAT);
         } else {
           return _fallbackOracle.getAssetPrice(asset);
-        }  
+        }
       } else {
         return _fallbackOracle.getAssetPrice(asset);
       }

@@ -57,7 +57,7 @@ task('dev:deploy-glacier-oracle', 'Deploy oracles for dev enviroment')
     const lendingRateOracleAddress = getParamPerNetwork(poolConfig.LendingRateOracle, network);
 
     Object.keys(AllAssetsInitialPrices).forEach(function (key) {
-      if (key != 'gCLP' && key != 'USD') {
+      if (key !== 'gCLP' && key !== 'USD' && key !== 'gETH') {
         delete AllAssetsInitialPrices[key];
       }
     });

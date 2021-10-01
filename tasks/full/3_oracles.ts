@@ -21,7 +21,7 @@ import {
   getLendingRateOracle,
   getPairsTokenAggregator,
 } from '../../helpers/contracts-getters';
-import { AaveOracle, LendingRateOracle } from '../../types';
+import { AaveOracle, LendingRateOracle, GlacierOracle } from '../../types';
 
 task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
   .addFlag('verify', 'Verify contracts at Etherscan')
@@ -57,24 +57,28 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
       [tokens, aggregators] = getPairsTokenAggregator(tokensToWatch, chainlinkAggregators);
 
       let aaveOracle: AaveOracle;
+      let glacierOracle: GlacierOracle;
+      let oracleAddress: string;
       let lendingRateOracle: LendingRateOracle;
 
       if (notFalsyOrZeroAddress(aaveOracleAddress)) {
         aaveOracle = await getAaveOracle(aaveOracleAddress);
+        oracleAddress = aaveOracle.address
       } else {
         if (ConfigNames.Glacier != pool) {
           aaveOracle = await deployAaveOracle(
             [tokens, aggregators, fallbackOracleAddress, await getWethAddress(poolConfig)],
             verify
           );
+          oracleAddress = aaveOracle.address
         } else {
-          aaveOracle = await deployGlacierOracle(
+          glacierOracle = await deployGlacierOracle(
             [tokens, aggregators, fallbackOracleAddress, await getWethAddress(poolConfig)],
             verify
           );
+          oracleAddress = glacierOracle.address
         }
-        // Constructor initialize assets
-        //await waitForTx(await aaveOracle.setAssetSources(tokens, aggregators));
+
       }
 
       if (notFalsyOrZeroAddress(lendingRateOracleAddress)) {
@@ -90,11 +94,8 @@ task('full:deploy-oracles', 'Deploy oracles for dev enviroment')
         );
       }
 
-      console.log('Aave Oracle: %s', aaveOracle.address);
-      console.log('Lending Rate Oracle: %s', lendingRateOracle.address);
-
       // Register the proxy price provider on the addressesProvider
-      await waitForTx(await addressesProvider.setPriceOracle(aaveOracle.address));
+      await waitForTx(await addressesProvider.setPriceOracle(oracleAddress));
       await waitForTx(await addressesProvider.setLendingRateOracle(lendingRateOracle.address));
     } catch (error) {
       if (DRE.network.name.includes('tenderly')) {
